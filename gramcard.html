@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mentors Classes 1.0 - Student Portal</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f8fafc; color: #1e293b; min-height: 100vh; }
+        
+        /* App Header */
+        .app-header { background: #0f172a; color: white; padding: 12px 15px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .app-brand { display: flex; align-items: center; gap: 10px; }
+        .app-logo { width: 38px; height: 38px; background: #3b82f6; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; color: white; }
+        .app-title h2 { font-size: 16px; color: #f8fafc; }
+        .app-title span { font-size: 10px; background: #3b82f6; padding: 1px 6px; border-radius: 8px; color: white; }
+
+        /* Header Actions */
+        .header-actions { display: flex; gap: 10px; align-items: center; }
+        .whatsapp-btn { background: #25d366; color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; text-decoration: none; display: flex; align-items: center; gap: 4px; box-shadow: 0 2px 5px rgba(37,211,102,0.3); }
+        .menu-btn { cursor: pointer; font-size: 22px; font-weight: bold; padding: 0 5px; color: white; }
+
+        /* Dropdown Menu */
+        .dropdown { position: relative; }
+        .dropdown-content { display: none; position: absolute; right: 0; top: 35px; background: white; min-width: 150px; box-shadow: 0 8px 16px rgba(0,0,0,0.2); border-radius: 8px; z-index: 1001; }
+        .dropdown-content a { color: #333; padding: 12px; text-decoration: none; display: block; font-size: 14px; font-weight: 500; }
+        .dropdown-content a:hover { background: #f1f5f9; }
+
+        .container { max-width: 750px; margin: 20px auto; padding: 0 15px; }
+        
+        /* Admission Banner */
+        .admission-banner { background: #eef2ff; padding: 12px 15px; border-radius: 10px; border-left: 4px solid #4f46e5; margin-bottom: 20px; font-size: 13px; color: #3730a3; line-height: 1.4; }
+        
+        /* Login Card */
+        .card-box { background: white; padding: 25px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; border: 1px solid #e2e8f0; }
+        .card-box h3 { color: #0f172a; margin-bottom: 12px; font-size: 18px; }
+        
+        .class-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 15px 0; }
+        .class-btn { background: #f1f5f9; border: 1px solid #cbd5e1; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14px; color: #334155; transition: all 0.2s; }
+        .class-btn:hover, .class-btn.selected { background: #3b82f6; color: white; border-color: #2563eb; }
+
+        .input-box { width: 100%; padding: 12px; margin: 12px 0; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 15px; outline: none; }
+        .input-box:focus { border-color: #3b82f6; }
+
+        .primary-btn { background: #0f172a; color: white; border: none; padding: 12px; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; font-size: 15px; transition: background 0.2s; }
+        .primary-btn:hover { background: #1e293b; }
+
+        /* Dashboard */
+        #dashboard { display: none; }
+        .welcome-banner { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(37,99,235,0.2); }
+        .welcome-banner h1 { font-size: 20px; margin-bottom: 5px; }
+        
+        .section-card { background: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.04); border: 1px solid #e2e8f0; }
+        .section-card h3 { color: #0f172a; margin-bottom: 12px; font-size: 16px; border-bottom: 2px solid #f8fafc; padding-bottom: 8px; }
+
+        .notice-item { background: #fffbeb; border-left: 4px solid #f59e0b; padding: 10px; margin-bottom: 8px; border-radius: 4px; font-size: 14px; color: #b45309; }
+        
+        .video-item { margin-bottom: 15px; }
+        .video-title { font-weight: bold; margin-bottom: 6px; font-size: 15px; color: #334155; }
+        .video-frame { position: relative; width: 100%; padding-bottom: 56.25%; height: 0; }
+        .video-frame iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 8px; border: none; }
+
+        .loader { display: none; text-align: center; margin-top: 10px; color: #3b82f6; font-weight: bold; font-size: 14px; }
+        .logout-link { display: inline-block; margin-top: 10px; color: #fff; font-size: 13px; text-decoration: underline; cursor: pointer; opacity: 0.9; }
+    </style>
+</head>
+<body>
+
+    <!-- Top App Header -->
+    <div class="app-header">
+        <div class="app-brand">
+            <div class="app-logo">M</div>
+            <div class="app-title">
+                <h2>Mentors Classes</h2>
+                <span>v1.0 Pro</span>
+            </div>
+        </div>
+        <div class="header-actions">
+            <a href="https://wa.me/919546125299?text=Sir, mujhe admission ke baare mein baat karni hai." class="whatsapp-btn" target="_blank">
+                📞 WhatsApp Help
+            </a>
+            <div class="dropdown">
+                <div class="menu-btn" onclick="toggleMenu()">⋮</div>
+                <div id="myDropdown" class="dropdown-content">
+                    <a href="#" onclick="showAbout()">About Us</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        
+        <!-- Admission Instruction Notice -->
+        <div class="admission-banner">
+            <b>नोट:</b> एडमिशन लेने के लिए ऊपर दिए गए <b>WhatsApp Help</b> बटन पर क्लिक करके टीचर से बात करें (Helpline: 9546125299)।
+        </div>
+
+        <!-- Login & Class Selection Section -->
+        <div id="login-section" class="card-box">
+            <h3>अपनी कक्षा चुनें</h3>
+            <p style="font-size: 13px; color: #64748b; margin-bottom: 10px;">जिस कक्षा में आपका एडमिशन है, उस पर क्लिक करें:</p>
+            
+            <div class="class-grid">
+               <button class="class-btn" onclick="selectClass('6th', this)">Class 6th</button>
+               <button class="class-btn" onclick="selectClass('7th', this)">Class 7th</button>
+               <button class="class-btn" onclick="selectClass('8th', this)">Class 8th</button>
+               <button class="class-btn" onclick="selectClass('9th', this)">Class 9th</button>
+               <button class="class-btn" onclick="selectClass('10th', this)">Class 10th</button>
+            </div>
+
+            <input type="email" id="userEmail" class="input-box" placeholder="अपनी रजिस्टर्ड जीमेल आईडी लिखें">
+            <button class="primary-btn" onclick="checkLogin()">पोर्टल में प्रवेश करें 🚀</button>
+            <div id="loader" class="loader">सत्यापन हो रहा है, कृपया प्रतीक्षा करें...</div>
+        </div>
+
+        <!-- Dashboard Section -->
+        <div id="dashboard">
+            <div class="welcome-banner">
+                <h1 id="welcome-msg">नमस्ते!</h1>
+                <p id="class-info" style="font-size: 14px;"></p>
+                <span class="logout-link" onclick="logout()">← दूसरी कक्षा या आईडी से लॉगिन करें (Logout)</span>
+            </div>
+
+            <!-- Notice Board -->
+            <div id="notice-card" class="section-card" style="display:none;">
+                <h3>📢 नोटिस बोर्ड / सूचनाएं</h3>
+                <div id="notice-content"></div>
+            </div>
+
+            <!-- Live Class -->
+            <div id="live-section" class="section-card" style="display:none; background: #fef2f2; border-color: #fee2e2;">
+                <h3 id="live-title" style="color: #dc2626;">🔴 लाइव क्लास</h3>
+                <div class="video-frame">
+                    <iframe id="live-iframe" src="" allowfullscreen></iframe>
+                </div>
+            </div>
+
+            <!-- Courses / Videos -->
+            <div class="section-card">
+                <h3>📚 कक्षा के वीडियो लेक्चर्स</h3>
+                <div id="courses-content">
+                    <p style="color: #64748b; text-align: center; padding: 20px;">कोई वीडियो उपलब्ध नहीं है।</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbza1xOzQDGGgDboyWX_GVQvGmyc-XcwvWG7fDZMW3t3DpZUOufAvVSKeKNhpHPprMud_A/exec";
+        let selectedClass = "";
+
+        window.onload = function() {
+            let savedEmail = localStorage.getItem("student_email");
+            if (savedEmail) {
+                document.getElementById('userEmail').value = savedEmail;
+            }
+        };
+
+        function toggleMenu() {
+            let dropdown = document.getElementById("myDropdown");
+            dropdown.style.display = (dropdown.style.display === "block") ? "none" : "block";
+        }
+
+        function showAbout() {
+            alert("Mentors Classes 1.0\nसंस्थान: गुणवत्तापूर्ण शिक्षा\nसुलतानपुर, वैशाली, बिहार\nसंपर्क: 9546125299");
+            toggleMenu();
+        }
+
+        window.onclick = function(event) {
+            if (!event.target.matches('.menu-btn')) {
+                let dropdowns = document.getElementsByClassName("dropdown-content");
+                for (let i = 0; i < dropdowns.length; i++) {
+                    let openDropdown = dropdowns[i];
+                    if (openDropdown.style.display === "block") {
+                        openDropdown.style.display = "none";
+                    }
+                }
+            }
+        }
+
+        function selectClass(className, btnElement) {
+            document.querySelectorAll('.class-btn').forEach(btn => btn.classList.remove('selected'));
+            btnElement.classList.add('selected');
+            selectedClass = className;
+        }
+
+        // YouTube लिंक को सही Embed फॉर्मेट में बदलने का फंक्शन
+        function getEmbedUrl(url) {
+            if (!url) return "";
+            let videoId = "";
+            let cleanUrl = url.trim();
+            if (cleanUrl.includes("youtu.be/")) {
+                videoId = cleanUrl.split("youtu.be/")[1].split("?")[0];
+            } else if (cleanUrl.includes("watch?v=")) {
+                videoId = cleanUrl.split("watch?v=")[1].split("&")[0];
+            } else if (cleanUrl.includes("youtube.com/live/")) {
+                videoId = cleanUrl.split("youtube.com/live/")[1].split("?")[0];
+            } else {
+                videoId = cleanUrl;
+            }
+            return `https://www.youtube.com/embed/${videoId}`;
+        }
+
+        async function checkLogin() {
+            const email = document.getElementById('userEmail').value.trim();
+            const loader = document.getElementById('loader');
+            
+            if(!selectedClass) {
+                alert("कृपया पहले अपनी कक्षा (Class) चुनें!");
+                return;
+            }
+            if(!email) {
+                alert("कृपया अपनी रजिस्टर्ड जीमेल आईडी दर्ज करें!");
+                return;
+            }
+
+            loader.style.display = 'block';
+
+            try {
+                const response = await fetch(`${SCRIPT_URL}?action=checkStudent&email=${encodeURIComponent(email)}`);
+                const data = await response.json();
+                
+                loader.style.display = 'none';
+
+                if (data.status === "Allowed") {
+                    localStorage.setItem("student_email", email);
+
+                    document.getElementById('login-section').style.display = 'none';
+                    document.getElementById('dashboard').style.display = 'block';
+                    document.getElementById('welcome-msg').innerText = "स्वागत है, " + data.name;
+                    document.getElementById('class-info').innerText = "कक्षा: " + data.class + " | Mentors Classes 1.0";
+                    
+                    loadDashboardData(data.class);
+                } else {
+                    alert("यह जीमेल आईडी रजिस्टर्ड नहीं है या सक्रिय (Active) नहीं है। कृपया WhatsApp Help पर संपर्क करें।");
+                }
+            } catch (error) {
+                loader.style.display = 'none';
+                console.error(error);
+                alert("सर्वर से कनेक्ट करने में समस्या, कृपया दोबारा कोशिश करें।");
+            }
+        }
+
+        async function loadDashboardData(userClass) {
+            try {
+                const response = await fetch(`${SCRIPT_URL}?action=getData&class=${encodeURIComponent(userClass)}`);
+                const data = await response.json();
+
+                // 1. Notices
+                if (data.notices && data.notices.length > 0) {
+                    document.getElementById('notice-card').style.display = 'block';
+                    let noticeHtml = "";
+                    data.notices.forEach(n => {
+                        noticeHtml += `<div class="notice-item"><b>${n.date}:</b> ${n.text}</div>`;
+                    });
+                    document.getElementById('notice-content').innerHTML = noticeHtml;
+                }
+
+                // 2. Live Class
+                if (data.live && data.live.status === "Yes") {
+                    document.getElementById('live-section').style.display = 'block';
+                    document.getElementById('live-title').innerText = `🔴 लाइव क्लास: ${data.live.subject}`;
+                    document.getElementById('live-iframe').src = getEmbedUrl(data.live.link);
+                }
+
+                // 3. Courses
+                const coursesContent = document.getElementById('courses-content');
+                if (data.courses && data.courses.length > 0) {
+                    coursesContent.innerHTML = "";
+                    data.courses.forEach(c => {
+                        coursesContent.innerHTML += `
+                            <div class="video-item">
+                                <div class="video-title">📖 [${c.subject}] ${c.title}</div>
+                                <div class="video-frame">
+                                    <iframe src="${getEmbedUrl(c.videoLink)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                </div>
+                            </div><hr style="margin: 20px 0; border:0; border-top:1px solid #f1f5f9;">
+                        `;
+                    });
+                } else {
+                    coursesContent.innerHTML = `<p style="color: #64748b; text-align: center; padding: 20px;">इस कक्षा के लिए अभी कोई वीडियो उपलब्ध नहीं है।</p>`;
+                }
+            } catch (error) {
+                console.error("डेटा लोड करने में त्रुटि:", error);
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem("student_email");
+            window.location.reload();
+        }
+    </script>
+</body>
+</html>
